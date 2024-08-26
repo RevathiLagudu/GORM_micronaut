@@ -50,6 +50,61 @@ class AuthorBookService {
             }
             return authorModel
         }
+        /*Get Books Details By Id*/
+    @Transactional
+    BooksDomain getBookById(int id){
+        BooksDomain bookDomain=BooksDomain.findById(id)
+        if(bookDomain){
+            BookModel bookModel = new BookModel()
+            bookModel.title = bookDomain.title
+            bookModel.price=bookDomain.price
+            bookModel.pubDate=bookDomain.pubDate
+            // Instantiate the AuthorModel and set its properties
+            AuthorModel authorModel = new AuthorModel()
+            authorModel.firstName = bookDomain.author.firstName
+            authorModel.lastName = bookDomain.author.lastName
+            authorModel.dob = bookDomain.author.dob
+            // Set the authorModel in bookModel
+            bookModel.author = authorModel
+            return bookModel
+
+        }
+    }
+
+
+        @Transactional
+        def deleteAuthor(int id){
+            AuthorDomain authorDomain=AuthorDomain.findById(id)
+            if(authorDomain){
+                authorDomain.delete()
+                return true
+            }
+            else{
+                return false
+            }
+        }
+
+
+        /*update By AuthorId*/
+        @Transactional
+        def updateAuthor(int id,AuthorModel updatedAuthorModel){
+            AuthorDomain authorDomain=AuthorDomain.findById(id)
+            authorDomain.firstName=updatedAuthorModel.firstName
+            authorDomain.lastName=updatedAuthorModel.lastName
+            authorDomain.dob=updatedAuthorModel.dob
+            authorDomain.save()
+            updatedAuthorModel.books.each{
+                BooksDomain bookDomain=new BooksDomain()
+                bookDomain.title=it.title
+                bookDomain.price=it.price
+                bookDomain.pubDate=it.pubDate
+                bookDomain.author=authorDomain
+                authorDomain.addToBooks(bookDomain)
+                bookDomain.save()
+            }
+            authorDomain.save()
+            return updatedAuthorModel
+        }
 
 //    def saveAuthor(AuthorModel authorModel) {
 //        AuthorDomain authorDomain = authorModel.toAuthorDomain()
