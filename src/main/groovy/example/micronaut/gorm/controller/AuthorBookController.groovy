@@ -29,6 +29,21 @@ class AuthorBookController {
     def getAllAuthors(){
         return authorBookService.getAllAuthors()
     }
+     @Get("/{id}")
+    BooksDomain fetchById(@PathVariable int id){
+        return authorBookService.getBookById(id)
+    }
+
+    @Put("/{id}")
+    def update(@PathVariable int id, @Body AuthorModel author ){
+        return authorBookService.updateAuthor(id,author)
+
+    }
+
+    @Delete("/{id}")
+    def delete(@PathVariable int id){
+        return authorBookService.deleteAuthor(id)
+    }
 
 
 
